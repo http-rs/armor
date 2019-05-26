@@ -2,7 +2,7 @@
 [![crates.io version][1]][2] [![build status][3]][4]
 [![downloads][5]][6] [![docs.rs docs][7]][8]
 
-HTTP Security Headers.
+HTTP Security Headers. Adapted from [helmetjs](https://helmetjs.github.io/).
 
 - [Documentation][8]
 - [Crates.io][2]
@@ -11,7 +11,10 @@ HTTP Security Headers.
 ## Examples
 __Basic usage__
 ```rust
-// tbi
+let mut headers = http::HeaderMap::new();
+armor::armor(&mut headers);
+assert_eq!(headers["X-Content-Type-Options"], "nosniff");
+assert_eq!(headers["X-XSS-Protection"], "1; mode=block");
 ```
 
 ## Installation

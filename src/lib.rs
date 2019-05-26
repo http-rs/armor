@@ -1,5 +1,7 @@
 //! HTTP Security Headers.
 //!
+//! Adapted from [helmetjs](https://helmetjs.github.io/).
+//!
 //! ## Example
 //! ```
 //! let mut headers = http::HeaderMap::new();
