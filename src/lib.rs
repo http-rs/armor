@@ -144,3 +144,66 @@ pub fn dont_sniff_mimetype(headers: &mut HeaderMap) {
 pub fn xss_filter(headers: &mut HeaderMap) {
     headers.insert("X-XSS-Protection", "1; mode=block".parse().unwrap());
 }
+
+/// Set the Referrer-Policy level
+#[derive(Debug, Clone)]
+pub enum ReferrerOptions {
+    /// Set to "" (default from browser/site)
+    Empty,
+    /// Set to "no-referrer"
+    NoReferrer,
+    /// Set to "no-ferffer-when-downgrade" the default 
+    NoReferrerDowngrade,
+    /// Set to "same-origin"
+    SameOrigin,
+    /// Set to "origin"
+    Origin,
+    /// Set to "strict-origin"
+    StrictOrigin,
+    /// Set to "origin-when-cross-origin"
+    CrossOrigin,
+    /// Set to "strict-origin-when-cross-origin"
+    StrictCrossOrigin,
+    /// Set to "unsafe-url"
+    UnsafeUrl,
+}
+
+/// Mitigates referrer leakage by controlling the referer[sic] header in links away from pages
+/// 
+/// [read more](https://scotthelme.co.uk/a-new-security-header-referrer-policy/)
+///
+/// [Mozilla Developer Network](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy)
+///
+/// The default value for most browsers/sites is `no-referrer-when-downgrade` setting
+/// the header with `ReferrerOptions::Empty` or `None` will default to the site/browsers options
+///
+/// ## Examples
+/// ```
+/// let mut headers = http::HeaderMap::new();
+/// armor::referrer_policy(&mut headers, Some(ReferrerOptions::UnsafeUrl));
+/// armor::referrer_policy(&mut headers, Some(ReferrerOptions::NoReferrer));
+/// let mut referrerValues: Vec<&str> = headers.get_all("Referrer-Policy").iter().map(|x| x.to_str().unwrap()).collect();
+/// assert_eq!(referrerValues.sort(), vec!("unsafe-url", "no-referrer").sort());
+/// ```
+#[inline]
+pub fn referrer_policy(headers: &mut HeaderMap, referrer: Option<ReferrerOptions>) {
+    let policy = match referrer {
+        None | Some(ReferrerOptions::Empty) => "",
+        Some(ReferrerOptions::NoReferrer) => "no-referrer",
+        Some(ReferrerOptions::NoReferrerDowngrade) => "no-referrer-when-downgrade",
+        Some(ReferrerOptions::SameOrigin) => "same-origin",
+        Some(ReferrerOptions::Origin) => "origin",
+        Some(ReferrerOptions::StrictOrigin) => "strict-origin",
+        Some(ReferrerOptions::CrossOrigin) => "origin-when-cross-origin",
+        Some(ReferrerOptions::StrictCrossOrigin) => "strict-origin-when-cross-origin",
+        Some(ReferrerOptions::UnsafeUrl) => "unsafe-url"
+    };
+
+    // Allowing for multiple Referrer-Policy headers to be set
+    // [Spec](https://w3c.github.io/webappsec-referrer-policy/#unknown-policy-values) Example #13
+    if headers.contains_key("Referrer-Policy") {
+        headers.append("Referrer-Policy", policy.parse().unwrap());
+    } else {
+        headers.insert("Referrer-Policy", policy.parse().unwrap());
+    }
+}
