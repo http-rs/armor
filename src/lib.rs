@@ -152,7 +152,7 @@ pub enum ReferrerOptions {
     Empty,
     /// Set to "no-referrer"
     NoReferrer,
-    /// Set to "no-ferffer-when-downgrade" the default 
+    /// Set to "no-referrer-when-downgrade" the default
     NoReferrerDowngrade,
     /// Set to "same-origin"
     SameOrigin,
@@ -169,7 +169,7 @@ pub enum ReferrerOptions {
 }
 
 /// Mitigates referrer leakage by controlling the referer[sic] header in links away from pages
-/// 
+///
 /// [read more](https://scotthelme.co.uk/a-new-security-header-referrer-policy/)
 ///
 /// [Mozilla Developer Network](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy)
@@ -196,7 +196,7 @@ pub fn referrer_policy(headers: &mut HeaderMap, referrer: Option<ReferrerOptions
         Some(ReferrerOptions::StrictOrigin) => "strict-origin",
         Some(ReferrerOptions::CrossOrigin) => "origin-when-cross-origin",
         Some(ReferrerOptions::StrictCrossOrigin) => "strict-origin-when-cross-origin",
-        Some(ReferrerOptions::UnsafeUrl) => "unsafe-url"
+        Some(ReferrerOptions::UnsafeUrl) => "unsafe-url",
     };
 
     // Allowing for multiple Referrer-Policy headers to be set
