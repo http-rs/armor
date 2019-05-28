@@ -148,8 +148,6 @@ pub fn xss_filter(headers: &mut HeaderMap) {
 /// Set the Referrer-Policy level
 #[derive(Debug, Clone)]
 pub enum ReferrerOptions {
-    /// Set to "" (default from browser/site)
-    Empty,
     /// Set to "no-referrer"
     NoReferrer,
     /// Set to "no-referrer-when-downgrade" the default
@@ -174,22 +172,19 @@ pub enum ReferrerOptions {
 ///
 /// [Mozilla Developer Network](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy)
 ///
-/// The default value for most browsers/sites is `no-referrer-when-downgrade` setting
-/// the header with `ReferrerOptions::Empty` or `None` will default to the site/browsers options
 ///
 /// ## Examples
 /// ```
 /// let mut headers = http::HeaderMap::new();
 /// armor::referrer_policy(&mut headers, Some(armor::ReferrerOptions::UnsafeUrl));
-/// armor::referrer_policy(&mut headers, Some(armor::ReferrerOptions::NoReferrer));
+/// armor::referrer_policy(&mut headers, None);
 /// let mut referrerValues: Vec<&str> = headers.get_all("Referrer-Policy").iter().map(|x| x.to_str().unwrap()).collect();
 /// assert_eq!(referrerValues.sort(), vec!("unsafe-url", "no-referrer").sort());
 /// ```
 #[inline]
 pub fn referrer_policy(headers: &mut HeaderMap, referrer: Option<ReferrerOptions>) {
     let policy = match referrer {
-        None | Some(ReferrerOptions::Empty) => "",
-        Some(ReferrerOptions::NoReferrer) => "no-referrer",
+        None | Some(ReferrerOptions::NoReferrer) => "no-referrer",
         Some(ReferrerOptions::NoReferrerDowngrade) => "no-referrer-when-downgrade",
         Some(ReferrerOptions::SameOrigin) => "same-origin",
         Some(ReferrerOptions::Origin) => "origin",
