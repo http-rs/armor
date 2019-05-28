@@ -180,8 +180,8 @@ pub enum ReferrerOptions {
 /// ## Examples
 /// ```
 /// let mut headers = http::HeaderMap::new();
-/// armor::referrer_policy(&mut headers, Some(ReferrerOptions::UnsafeUrl));
-/// armor::referrer_policy(&mut headers, Some(ReferrerOptions::NoReferrer));
+/// armor::referrer_policy(&mut headers, Some(armor::ReferrerOptions::UnsafeUrl));
+/// armor::referrer_policy(&mut headers, Some(armor::ReferrerOptions::NoReferrer));
 /// let mut referrerValues: Vec<&str> = headers.get_all("Referrer-Policy").iter().map(|x| x.to_str().unwrap()).collect();
 /// assert_eq!(referrerValues.sort(), vec!("unsafe-url", "no-referrer").sort());
 /// ```
