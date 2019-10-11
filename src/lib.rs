@@ -16,8 +16,7 @@
 #![cfg_attr(test, deny(warnings))]
 
 use http::HeaderMap;
-mod csp;
-pub use self::csp::ContentSecurityPolicy;
+pub mod csp;
 
 /// Apply all protections.
 ///
@@ -202,35 +201,5 @@ pub fn referrer_policy(headers: &mut HeaderMap, referrer: Option<ReferrerOptions
         headers.append("Referrer-Policy", policy.parse().unwrap());
     } else {
         headers.insert("Referrer-Policy", policy.parse().unwrap());
-    }
-}
-
-/// Sets the `Content-Security-Policy` header to prevent cross-site injections
-///
-/// [read more](https://helmetjs.github.io/docs/csp/)
-///
-/// [Mozilla Developer Network](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy)
-///
-///
-/// ## Examples
-/// ```
-/// let mut headers = http::HeaderMap::new();
-/// armor::armor(&mut headers);
-/// let mut csp_policy = armor::ContentSecurityPolicy::new();
-/// csp_policy
-///     .default_src(&["'self'", "areweasyncyet.rs"])
-///     .script_src(&["'self'"])
-///     .object_src(&["'none'"])
-///     .upgrade_insecure_requests();
-/// armor::content_security_policy(&mut headers, csp_policy);
-/// assert_eq!(headers["content-security-policy"], "default-src 'self' areweasyncyet.rs; script-src 'self'; object-src 'none'; upgrade-insecure-requests");
-/// ```
-#[inline]
-pub fn content_security_policy(headers: &mut HeaderMap, csp_policy: ContentSecurityPolicy) {
-    let val = csp_policy.value().parse().unwrap();
-    if !csp_policy.report() {
-        headers.insert("Content-Security-Policy", val);
-    } else {
-        headers.insert("Content-Security-Policy-Report-Only", val);
     }
 }
