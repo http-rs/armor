@@ -9,12 +9,12 @@
 //! ```
 //! let mut policy = armor::csp::new();
 //! policy
-//! .default_src(armor::csp::Source::SameOrigin)
-//! .default_src("areweasyncyet.rs")
-//! .script_src(armor::csp::Source::SameOrigin)
-//! .object_src(armor::csp::Source::None)
-//! .base_uri(armor::csp::Source::None)
-//! .upgrade_insecure_requests();
+//!     .default_src(armor::csp::Source::SameOrigin)
+//!     .default_src("areweasyncyet.rs")
+//!     .script_src(armor::csp::Source::SameOrigin)
+//!     .object_src(armor::csp::Source::None)
+//!     .base_uri(armor::csp::Source::None)
+//!     .upgrade_insecure_requests();
 //! let mut headers = http::HeaderMap::new();
 //! armor::armor(&mut headers);
 //! policy.apply(&mut headers);
