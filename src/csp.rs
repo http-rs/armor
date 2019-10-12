@@ -308,7 +308,7 @@ impl ContentSecurityPolicy {
         self
     }
 
-    /// Create ad retrieve the policy value
+    /// Create and retrieve the policy value
     fn value(&mut self) -> String {
         for (directive, sources) in &self.directives {
             let policy = format!("{} {}", directive, sources.join(" "));
