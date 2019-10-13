@@ -1,13 +1,6 @@
 use armor::csp;
-use std::error::Error;
 
-#[test]
-fn should_work() -> Result<(), Box<dyn Error + Send + Sync + 'static>> {
-    Ok(())
-}
-
-#[test]
-fn csp_test() {
+fn main() {
     let mut policy = armor::csp::new();
     policy
         .default_src(csp::Source::SameOrigin)

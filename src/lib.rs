@@ -10,12 +10,13 @@
 //! assert_eq!(headers["X-XSS-Protection"], "1; mode=block");
 //! ```
 
-#![forbid(unsafe_code, future_incompatible, rust_2018_idioms)]
-#![deny(missing_debug_implementations, nonstandard_style)]
+#![forbid(unsafe_code, future_incompatible)]
+#![deny(missing_debug_implementations, nonstandard_style, rust_2018_idioms)]
 #![warn(missing_docs, missing_doc_code_examples)]
 #![cfg_attr(test, deny(warnings))]
 
 use http::HeaderMap;
+pub mod csp;
 
 /// Apply all protections.
 ///
