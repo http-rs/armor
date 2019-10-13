@@ -1,23 +1,24 @@
-//! Sets the `Content-Security-Policy` (CSP) HTTP header to prevent cross-site injections
+//! Apply `Content-Security-Policy` headers.
 //!
-//! [read more](https://helmetjs.github.io/docs/csp/)
+//! `Content-Security-Policy` (CSP) HTTP headers are used to prevent cross-site
+//! injections. [Read more](https://helmetjs.github.io/docs/csp/)
 //!
 //! [Mozilla Developer Network](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy)
 //!
+//! # Examples
 //!
-//! ## Examples
 //! ```
-//! let mut policy = armor::csp::new();
-//! policy
+//! let mut policy = armor::csp::new()
 //!     .default_src(armor::csp::Source::SameOrigin)
 //!     .default_src("areweasyncyet.rs")
 //!     .script_src(armor::csp::Source::SameOrigin)
 //!     .object_src(armor::csp::Source::None)
 //!     .base_uri(armor::csp::Source::None)
 //!     .upgrade_insecure_requests();
+//!
 //! let mut headers = http::HeaderMap::new();
-//! armor::armor(&mut headers);
 //! policy.apply(&mut headers);
+//!
 //! assert_eq!(headers["content-security-policy"], "base-uri 'none'; default-src 'self' areweasyncyet.rs; object-src 'none'; script-src 'self'; upgrade-insecure-requests");
 //! ```
 
@@ -27,6 +28,7 @@ use std::collections::HashMap;
 use std::fmt;
 
 /// Define source value
+///
 /// [read more](https://content-security-policy.com)
 #[derive(Debug)]
 pub enum Source {
@@ -95,6 +97,7 @@ impl AsRef<str> for Source {
 }
 
 /// Define `report-to` directive value
+///
 /// [MDN | report-to](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/report-to)
 #[derive(Serialize, Debug)]
 pub struct ReportTo {
@@ -107,6 +110,7 @@ pub struct ReportTo {
 }
 
 /// Define `endpoints` for `report-to` directive value
+///
 /// [MDN | report-to](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/report-to)
 #[derive(Serialize, Debug)]
 pub struct ReportToEndpoint {
@@ -134,9 +138,9 @@ impl Default for ContentSecurityPolicy {
 }
 
 impl ContentSecurityPolicy {
-    /// Instantiates ContentSecurityPolicy
-    pub fn new() -> ContentSecurityPolicy {
-        ContentSecurityPolicy {
+    /// Create a new instance.
+    pub fn new() -> Self {
+        Self {
             policy: Vec::new(),
             report_only_flag: false,
             directives: HashMap::new(),
@@ -151,107 +155,122 @@ impl ContentSecurityPolicy {
     }
 
     /// Defines the Content-Security-Policy `base-uri` directive
+    ///
     /// [MDN | base-uri](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/base-uri)
-    pub fn base_uri<T: AsRef<str>>(&mut self, source: T) -> &mut ContentSecurityPolicy {
+    pub fn base_uri<T: AsRef<str>>(&mut self, source: T) -> &mut Self {
         self.insert_directive("base-uri", source);
         self
     }
 
     /// Defines the Content-Security-Policy `block-all-mixed-content` directive
+    ///
     /// [MDN | block-all-mixed-content](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/block-all-mixed-content)
-    pub fn block_all_mixed_content(&mut self) -> &mut ContentSecurityPolicy {
+    pub fn block_all_mixed_content(&mut self) -> &mut Self {
         let policy = String::from("block-all-mixed-content");
         self.policy.push(policy);
         self
     }
 
     /// Defines the Content-Security-Policy `connect-src` directive
+    ///
     /// [MDN | connect-src](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/connect-src)
-    pub fn connect_src<T: AsRef<str>>(&mut self, source: T) -> &mut ContentSecurityPolicy {
+    pub fn connect_src<T: AsRef<str>>(&mut self, source: T) -> &mut Self {
         self.insert_directive("connect-src", source);
         self
     }
 
     /// Defines the Content-Security-Policy `default-src` directive
+    ///
     /// [MDN | default-src](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/default-src)
-    pub fn default_src<T: AsRef<str>>(&mut self, source: T) -> &mut ContentSecurityPolicy {
+    pub fn default_src<T: AsRef<str>>(&mut self, source: T) -> &mut Self {
         self.insert_directive("default-src", source);
         self
     }
 
     /// Defines the Content-Security-Policy `font-src` directive
+    ///
     /// [MDN | font-src](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/font-src)
-    pub fn font_src<T: AsRef<str>>(&mut self, source: T) -> &mut ContentSecurityPolicy {
+    pub fn font_src<T: AsRef<str>>(&mut self, source: T) -> &mut Self {
         self.insert_directive("font-src", source);
         self
     }
 
     /// Defines the Content-Security-Policy `form-action` directive
+    ///
     /// [MDN | form-action](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/form-action)
-    pub fn form_action<T: AsRef<str>>(&mut self, source: T) -> &mut ContentSecurityPolicy {
+    pub fn form_action<T: AsRef<str>>(&mut self, source: T) -> &mut Self {
         self.insert_directive("form-action", source);
         self
     }
 
     /// Defines the Content-Security-Policy `frame-ancestors` directive
+    ///
     /// [MDN | frame-ancestors](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors)
-    pub fn frame_ancestors<T: AsRef<str>>(&mut self, source: T) -> &mut ContentSecurityPolicy {
+    pub fn frame_ancestors<T: AsRef<str>>(&mut self, source: T) -> &mut Self {
         self.insert_directive("frame-ancestors", source);
         self
     }
 
     /// Defines the Content-Security-Policy `frame-src` directive
+    ///
     /// [MDN | frame-src](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-src)
-    pub fn frame_src<T: AsRef<str>>(&mut self, source: T) -> &mut ContentSecurityPolicy {
+    pub fn frame_src<T: AsRef<str>>(&mut self, source: T) -> &mut Self {
         self.insert_directive("frame-src", source);
         self
     }
 
     /// Defines the Content-Security-Policy `img-src` directive
+    ///
     /// [MDN | img-src](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/img-src)
-    pub fn img_src<T: AsRef<str>>(&mut self, source: T) -> &mut ContentSecurityPolicy {
+    pub fn img_src<T: AsRef<str>>(&mut self, source: T) -> &mut Self {
         self.insert_directive("img-src", source);
         self
     }
 
     /// Defines the Content-Security-Policy `media-src` directive
+    ///
     /// [MDN | media-src](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/media-src)
-    pub fn media_src<T: AsRef<str>>(&mut self, source: T) -> &mut ContentSecurityPolicy {
+    pub fn media_src<T: AsRef<str>>(&mut self, source: T) -> &mut Self {
         self.insert_directive("media-src", source);
         self
     }
 
     /// Defines the Content-Security-Policy `object-src` directive
+    ///
     /// [MDN | object-src](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/object-src)
-    pub fn object_src<T: AsRef<str>>(&mut self, source: T) -> &mut ContentSecurityPolicy {
+    pub fn object_src<T: AsRef<str>>(&mut self, source: T) -> &mut Self {
         self.insert_directive("object-src", source);
         self
     }
 
     /// Defines the Content-Security-Policy `plugin-types` directive
+    ///
     /// [MDN | plugin-types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/plugin-types)
-    pub fn plugin_types<T: AsRef<str>>(&mut self, source: T) -> &mut ContentSecurityPolicy {
+    pub fn plugin_types<T: AsRef<str>>(&mut self, source: T) -> &mut Self {
         self.insert_directive("plugin-types", source);
         self
     }
 
     /// Defines the Content-Security-Policy `require-sri-for` directive
+    ///
     /// [MDN | require-sri-for](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/require-sri-for)
-    pub fn require_sri_for<T: AsRef<str>>(&mut self, source: T) -> &mut ContentSecurityPolicy {
+    pub fn require_sri_for<T: AsRef<str>>(&mut self, source: T) -> &mut Self {
         self.insert_directive("require-sri-for ", source);
         self
     }
 
     /// Defines the Content-Security-Policy `report-uri` directive
+    ///
     /// [MDN | report-uri](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/report-uri)
-    pub fn report_uri<T: AsRef<str>>(&mut self, uri: T) -> &mut ContentSecurityPolicy {
+    pub fn report_uri<T: AsRef<str>>(&mut self, uri: T) -> &mut Self {
         self.insert_directive("report-uri", uri);
         self
     }
 
     /// Defines the Content-Security-Policy `report-to` directive
+    ///
     /// [MDN | report-to](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/report-to)
-    pub fn report_to(&mut self, endpoints: Vec<ReportTo>) -> &mut ContentSecurityPolicy {
+    pub fn report_to(&mut self, endpoints: Vec<ReportTo>) -> &mut Self {
         for endpoint in endpoints.iter() {
             match serde_json::to_string(&endpoint) {
                 Ok(json) => {
@@ -267,43 +286,48 @@ impl ContentSecurityPolicy {
     }
 
     /// Defines the Content-Security-Policy `sandbox` directive
+    ///
     /// [MDN | sandbox](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/sandbox)
-    pub fn sandbox<T: AsRef<str>>(&mut self, source: T) -> &mut ContentSecurityPolicy {
+    pub fn sandbox<T: AsRef<str>>(&mut self, source: T) -> &mut Self {
         self.insert_directive("sandbox", source);
         self
     }
 
     /// Defines the Content-Security-Policy `script-src` directive
+    ///
     /// [MDN | script-src](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src)
-    pub fn script_src<T: AsRef<str>>(&mut self, source: T) -> &mut ContentSecurityPolicy {
+    pub fn script_src<T: AsRef<str>>(&mut self, source: T) -> &mut Self {
         self.insert_directive("script-src", source);
         self
     }
 
     /// Defines the Content-Security-Policy `style-src` directive
+    ///
     /// [MDN | style-src](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/style-src)
-    pub fn style_src<T: AsRef<str>>(&mut self, source: T) -> &mut ContentSecurityPolicy {
+    pub fn style_src<T: AsRef<str>>(&mut self, source: T) -> &mut Self {
         self.insert_directive("style-src", source);
         self
     }
 
     /// Defines the Content-Security-Policy `upgrade-insecure-requests` directive
+    ///
     /// [MDN | upgrade-insecure-requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/upgrade-insecure-requests)
-    pub fn upgrade_insecure_requests(&mut self) -> &mut ContentSecurityPolicy {
+    pub fn upgrade_insecure_requests(&mut self) -> &mut Self {
         let policy = String::from("upgrade-insecure-requests");
         self.policy.push(policy);
         self
     }
 
     /// Defines the Content-Security-Policy `worker-src` directive
+    ///
     /// [MDN | worker-src](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/worker-src)
-    pub fn worker_src<T: AsRef<str>>(&mut self, source: T) -> &mut ContentSecurityPolicy {
+    pub fn worker_src<T: AsRef<str>>(&mut self, source: T) -> &mut Self {
         self.insert_directive("worker-src", source);
         self
     }
 
     /// Change the header to `Content-Security-Policy-Report-Only`
-    pub fn report_only(&mut self) -> &mut ContentSecurityPolicy {
+    pub fn report_only(&mut self) -> &mut Self {
         self.report_only_flag = true;
         self
     }
@@ -329,11 +353,7 @@ impl ContentSecurityPolicy {
     }
 }
 
-/// Instantiates ContentSecurityPolicy
+/// Create a new instance.
 pub fn new() -> ContentSecurityPolicy {
-    ContentSecurityPolicy {
-        policy: Vec::new(),
-        report_only_flag: false,
-        directives: HashMap::new(),
-    }
+    ContentSecurityPolicy::new()
 }
