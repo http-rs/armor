@@ -1,6 +1,13 @@
 # armor
+
 [![crates.io version][1]][2] [![build status][3]][4]
 [![downloads][5]][6] [![docs.rs docs][7]][8]
+
+This crate has been deprecated in favor of `http-types`. See
+[http-types#98](https://github.com/http-rs/http-types/pull/98) for more
+details.
+
+---
 
 HTTP Security Headers. Adapted from [helmetjs](https://helmetjs.github.io/).
 
